@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Newsreader</title>
+  <style>
+    :root{
+      --accent:#2563eb;
+      --bg:#f1f5f9;
+      --card:#ffffff;
+      --text:#1e293b;
+      --muted:#475569;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;color:var(--text);background:var(--bg)}
+    body{display:flex;align-items:center;justify-content:center;padding:32px}
+    .container{width:960px;max-width:96%;background:var(--card);padding:24px;border-radius:14px;box-shadow:0 4px 20px rgba(0,0,0,0.1)}
+    h1{margin:0 0 16px;font-size:40px;font-weight:800;text-align:center;color:var(--accent)}
+    p.lead{margin:0 0 18px;color:var(--muted);text-align:center}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .card{background:#f8fafc;padding:18px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+
+    label{display:block;font-size:14px;color:var(--muted);margin-bottom:6px;font-weight:600}
+    .input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #cbd5e1;background:#ffffff;color:var(--text)}
+    .row{display:flex;gap:10px}
+    .muted{color:var(--muted);font-size:13px}
+
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer;border:none;font-weight:600}
+    .btn:active{transform:translateY(1px)}
+
+    .extra{margin-top:16px}
+    .chevron{display:inline-block;transform:rotate(0)}
+    .extra-panel{overflow:hidden;max-height:0;transition:max-height .28s ease}
+    .extra-panel.open{max-height:500px}
+
+    .preview{background:#f1f5f9;padding:10px;border-radius:8px;margin-top:10px}
+    .audio-block{margin-top:12px}
+
+    .footer{margin-top:14px;background:#f1f5f9;padding:10px;border-radius:10px}
+    .small{font-size:13px}
+    @media (max-width:880px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Newsreader</h1>
+    <p class="lead">Upload an article (PDF, JPG, JPEG) or paste a public link. Use <strong>Extra Options</strong> to adjust how the summary is generated.</p>
+
+    <div class="grid">
+      <div class="card" aria-labelledby="form-heading">
+        <h2 id="form-heading" style="margin-top:0;font-size:16px">Input</h2>
+
+        <label for="urlInput">Article URL (open access)</label>
+        <input id="urlInput" class="input" type="url" placeholder="https://example.com/article" />
+
+        <div style="height:10px"></div>
+
+        <label for="fileInput">Or upload file (pdf, jpg, jpeg)</label>
+        <input id="fileInput" class="input" type="file" accept="application/pdf,image/jpeg,image/jpg" />
+
+        <div id="filePreview" class="preview" style="display:none"></div>
+
+        <div class="extra">
+          <button id="toggleExtra" class="btn" aria-expanded="false" aria-controls="extraPanel">
+            <span id="chev" class="chevron">▸</span> Extra Options
+          </button>
+
+          <div id="extraPanel" class="extra-panel" aria-hidden="true">
+            <div style="margin-top:12px">
+              <label><strong>Summary Length</strong></label>
+              <div class="choice">
+                <select id="lengthSelect" class="input" aria-label="Summary length">
+                  <option value="SHORT_LENGTH">Short</option>
+                  <option value="MEDIUM_LENGTH" selected>Medium (default)</option>
+                  <option value="LONG_LENGTH">Long</option>
+                  <option value="FULL_TEXT">Full</option>
+                </select>
+              </div>
+
+              <label style="margin-top:8px"><strong>Text Style</strong></label>
+              <div class="choice">
+                <select id="styleSelect" class="input" aria-label="Text style">
+                  <option value="NORMAL_WORDS" selected>Normal words (default)</option>
+                  <option value="EASIER_WORDS">Easier words</option>
+                </select>
+              </div>
+
+              <label class="small" style="margin-top:8px"><strong>Picture Detail</strong></label>
+              <div class="choice">
+                <input type="checkbox" id="pictureDetail" />
+                <label for="pictureDetail" class="small muted">Include a short explicit picture description at the end of the summary</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:14px"></div>
+        <div class="row">
+          <button id="generateBtn" class="btn" aria-label="Generate">Generate</button>
+          <button id="clearBtn" class="btn" style="background:#64748b;color:#fff">Clear</button>
+        </div>
+
+        <div id="status" class="muted small" style="margin-top:12px">Ready.</div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;font-size:16px">Result</h2>
+        <div id="resultText" class="preview small">No result yet. After backend responds, an MP3 readout and the summary will appear here.</div>
+
+        <div id="audioArea" class="audio-block" style="display:none">
+          <div style="margin-top:10px">Listen / download:</div>
+          <audio id="audioPlayer" controls style="width:100%;margin-top:8px"></audio>
+          <div style="margin-top:8px"><a id="downloadLink" download="newsreader_readout.mp3">Download MP3</a></div>
+        </div>
+
+        <div class="footer">
+          <h3 style="margin:6px 0 6px;font-size:14px">Review</h3>
+          <div class="muted small">Tell us how the summary & readout performed.</div>
+          <textarea id="reviewText" style="width:100%;min-height:90px;margin-top:8px;padding:8px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;color:var(--text)" placeholder="Write a short review of the output and website experience"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="submitReview" class="btn">Submit review</button>
+            <button id="resetReview" class="btn" style="background:#64748b">Clear</button>
+          </div>
+          <div id="reviewStatus" class="muted small" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const fileInput=document.getElementById('fileInput');
+    const urlInput=document.getElementById('urlInput');
+    const filePreview=document.getElementById('filePreview');
+    const toggleExtra=document.getElementById('toggleExtra');
+    const extraPanel=document.getElementById('extraPanel');
+    const chev=document.getElementById('chev');
+    const generateBtn=document.getElementById('generateBtn');
+    const clearBtn=document.getElementById('clearBtn');
+    const lengthSelect=document.getElementById('lengthSelect');
+    const styleSelect=document.getElementById('styleSelect');
+    const pictureDetail=document.getElementById('pictureDetail');
+    const status=document.getElementById('status');
+    const resultText=document.getElementById('resultText');
+    const audioArea=document.getElementById('audioArea');
+    const audioPlayer=document.getElementById('audioPlayer');
+    const downloadLink=document.getElementById('downloadLink');
+    const reviewText=document.getElementById('reviewText');
+    const submitReview=document.getElementById('submitReview');
+    const reviewStatus=document.getElementById('reviewStatus');
+
+    toggleExtra.addEventListener('click',()=>{
+      const open=extraPanel.classList.toggle('open');
+      toggleExtra.setAttribute('aria-expanded',open);
+      extraPanel.setAttribute('aria-hidden',!open);
+      chev.style.transform=open?'rotate(90deg)':'rotate(0deg)';
+    });
+
+    fileInput.addEventListener('change',()=>{
+      const f=fileInput.files[0];
+      if(!f){filePreview.style.display='none';filePreview.innerHTML='';return}
+      filePreview.style.display='block';
+      const ext=f.name.split('.').pop().toLowerCase();
+      if(ext==='pdf'){
+        filePreview.innerHTML=`<div class='small'>PDF file selected: ${escapeHtml(f.name)} (${Math.round(f.size/1024)} KB)</div>`;
+      }else if(ext==='jpg'||ext==='jpeg'){
+        const img=document.createElement('img');
+        img.style.maxWidth='100%';img.style.borderRadius='6px';
+        const url=URL.createObjectURL(f);
+        img.src=url;
+        filePreview.innerHTML='';
+        filePreview.appendChild(img);
+      }else{
+        filePreview.innerHTML=`<div class='small'>File selected: ${escapeHtml(f.name)}</div>`;
+      }
+    });
+
+    clearBtn.addEventListener('click',()=>{
+      fileInput.value='';urlInput.value='';filePreview.style.display='none';filePreview.innerHTML='';resultText.innerText='No result yet.';audioArea.style.display='none';reviewText.value='';status.innerText='Ready.';
+    });
+
+    function buildOptionsList(){
+      const list=[];
+      const lengthVal=lengthSelect.value;
+      list.push(lengthVal);
+      const styleVal=styleSelect.value;
+      list.push(styleVal);
+      list.push(pictureDetail.checked?'PICTURE_DETAIL':'NO_PICTURE_DETAIL');
+      return list;
+    }
+
+    function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+    generateBtn.addEventListener('click',async()=>{
+      const opts=buildOptionsList();
+      status.innerText='Preparing payload...';
+      const fd=new FormData();
+      fd.append('options',JSON.stringify(opts));
+      if(fileInput.files&&fileInput.files[0]){fd.append('file',fileInput.files[0]);}
+      else if(urlInput.value.trim()){fd.append('url',urlInput.value.trim());}
+      else{status.innerText='Please provide a URL or upload a file.';return;}
+      fd.append('client','newsreader-frontend');
+      fd.append('timestamp',new Date().toISOString());
+      status.innerText='Uploading to backend...';
+      resultText.innerText='Waiting for backend...';
+      audioArea.style.display='none';
+      try{
+        const resp=await fetch('/process',{method:'POST',body:fd});
+        if(!resp.ok){const txt=await resp.text();status.innerText='Backend error: '+resp.status;resultText.innerText='Error from backend: '+txt;return;}
+        const ct=resp.headers.get('Content-Type')||'';
+        if(ct.includes('audio')||ct.includes('mpeg')){
+          const blob=await resp.blob();
+          const url=URL.createObjectURL(blob);
+          audioPlayer.src=url;
+          downloadLink.href=url;
+          audioArea.style.display='block';
+          status.innerText='Audio received.';
+          const summaryHeader=resp.headers.get('X-Summary-Text');
+          if(summaryHeader){resultText.innerText=summaryHeader;}else{resultText.innerText='Audio received. If you expected text too, return JSON with summary or use a separate /result endpoint.'}
+        }else{
+          const j=await resp.json();
+          if(j.summary)resultText.innerText=j.summary;else resultText.innerText='No summary returned.';
+          if(j.audio_url){audioPlayer.src=j.audio_url;downloadLink.href=j.audio_url;audioArea.style.display='block';status.innerText='Audio URL received.';}
+          else if(j.audio_base64){const bytes=base64ToBlobUrl(j.audio_base64,'audio/mpeg');audioPlayer.src=bytes;downloadLink.href=bytes;audioArea.style.display='block';status.innerText='Audio (base64) received.';}
+          else{status.innerText='Completed (no audio returned).';}
+        }
+      }catch(err){console.error(err);status.innerText='Network or JS error: '+err.message;resultText.innerText='Failed to contact backend.';}
+    });
+
+    submitReview.addEventListener('click',async()=>{
+      const text=reviewText.value.trim();
+      if(!text){reviewStatus.innerText='Write something before submitting.';return}
+      reviewStatus.innerText='Sending review...';
+      try{
+        const r=await fetch('/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({review:text,timestamp:new Date().toISOString()})});
+        if(r.ok){reviewStatus.innerText='Thanks — review submitted.';reviewText.value='';}
+        else{reviewStatus.innerText='Failed to submit review.'}
+      }catch(e){reviewStatus.innerText='Network error while sending review.'}
+    });
+
+    function base64ToBlobUrl(base64,mime){
+      const bin=atob(base64.replace(/^data:[^;]+;base64,/,''));
+      const len=bin.length;
+      const arr=new Uint8Array(len);
+      for(let i=0;i<len;i++)arr[i]=bin.charCodeAt(i);
+      const blob=new Blob([arr],{type:mime});
+      return URL.createObjectURL(blob);
+    }
+  </script>
+</body>
+</html>
