@@ -8,9 +8,9 @@ from TTS.tts.datasets import load_tts_samples
 from TTS.tts.models.tacotron2 import Tacotron2
 from TTS.utils.audio import AudioProcessor
 
-# This is the standard protection for Windows multiprocessing
+#This is the standard protection for windows multiprocessing
 if __name__ == '__main__':
-    # --- 1. Define Paths and Check for GPU ---
+    #Define Paths and Check for GPU
     output_path = "tts_training_output"
     dataset_path = "LJSpeech-1.1/"
 
@@ -20,14 +20,14 @@ if __name__ == '__main__':
         print("FATAL ERROR: CUDA is not available.")
         exit()
 
-    # --- 2. HARDCODED Paths to the Downloaded Model ---
+    #hardcoded paths to downloaded Model 
     config_path = "C:/Users/E. Rodrigues Padrao/AppData/Local/tts/tts_models--en--ljspeech--tacotron2-DDC_ph/config.json"
     restore_path = "C:/Users/E. Rodrigues Padrao/AppData/Local/tts/tts_models--en--ljspeech--tacotron2-DDC_ph/model_file.pth"
 
-    print(f" > Using config file at: {config_path}")
-    print(f" > Using model file at: {restore_path}")
+    print(f"Using config file at: {config_path}")
+    print(f"Using model file at: {restore_path}")
 
-    # --- 3. Define Dataset Configuration ---
+    #Define dataset configuration
     dataset_config = BaseDatasetConfig(
         formatter="ljspeech",
         meta_file_train="metadata_train.csv",
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         path=dataset_path,
     )
 
-    # --- 4. Define Model Configuration for Fine-Tuning ---
+    #Define model configuration for finetuning 
     config = load_config(config_path)
     config.run_name = "tacotron2_ljspeech_finetune"
     config.batch_size = 8
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     config.output_path = output_path
     config.save_step = 1000
 
-    # --- 5. Initialize Audio Processor, Model, and Trainer ---
+    #Initialize audio processor, model, and trainer 
     ap = AudioProcessor.init_from_config(config)
     model = Tacotron2.init_from_config(config)
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         training_assets={"audio_processor": ap},
     )
 
-    # --- 6. Start the Fine-Tuning ---
+    #Start finetuning
     print("--- Starting Coqui TTS Training ---")
     print(f" > Output folder: {output_path}")
     trainer.fit()
