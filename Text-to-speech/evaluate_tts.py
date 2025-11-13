@@ -5,29 +5,29 @@ from TTS.utils.synthesizer import Synthesizer
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-print("--- Starting Coqui TTS Evaluation ---")
+print("Starting Coqui TTS Evaluation")
 
-# --- 1. Define paths to the trained Model ---
+#Define paths to the trained Model
 run_folder_name = "tacotron2_ljspeech_finetune-September-24-2025_11+21PM-0000000"
 training_output_path = os.path.join("tts_training_output", run_folder_name)
 
-# Paths to the two critical files
+#Paths to the two critical files
 model_path = os.path.join(training_output_path, "best_model.pth")
 config_path = os.path.join(training_output_path, "config.json")
 
-print(f" > Loading model config from: {config_path}")
-print(f" > Loading model weights from: {model_path}")
+print(f"Loading model config from: {config_path}")
+print(f"Loading model weights from: {model_path}")
 
-# Check for GPU
+#Check for GPU
 use_cuda = torch.cuda.is_available()
-print(f" > Using GPU: {use_cuda}")
+print(f"Using GPU: {use_cuda}")
 
-# Check if the files exist
+#Check if the files exist
 if not os.path.exists(config_path) or not os.path.exists(model_path):
-    logging.error("FATAL: Model files not found! Ensure the training ran and the paths are correct.")
+    logging.error("Model files not found! Ensure the training ran and the paths are correct")
     exit()
 
-# --- 2. Initialize the Synthesizer Directly ---
+# Initialize the synthesizer directly
 try:
     synthesizer = Synthesizer(
         tts_checkpoint=model_path,
@@ -39,7 +39,7 @@ except Exception as e:
     logging.error(f"Error initializing Synthesizer: {e}")
     exit()
 
-# --- 3. Generate Test Audio Samples ---
+#Generate test audio samples
 test_texts = [
     "The quick brown fox jumps over the lazy dog.",
     "Machine learning models require careful evaluation.",
@@ -50,22 +50,23 @@ test_texts = [
 
 output_audio_dir = "generated_audio_samples"
 os.makedirs(output_audio_dir, exist_ok=True)
-logging.info(f" > Generating test audio samples to: '{output_audio_dir}' folder.")
+logging.info(f"Generating test audio samples to: '{output_audio_dir}' folder.")
 
 for i, text in enumerate(test_texts):
     file_path = os.path.join(output_audio_dir, f"test_output_{i+1}.wav")
     logging.info(f"Synthesizing: '{text[:60]}...'")
     try:
-        # Use the synthesizer's tts method, which returns a waveform
+        #Use the synthesizer's tts method, which returns a waveform
         wav = synthesizer.tts(text)
-        # Use the synthesizer's save_wav method to write the file
+        #Use the synthesizer's save_wav method to write the file
         synthesizer.save_wav(wav=wav, path=file_path)
         logging.info(f" > Successfully saved to {file_path}")
     except Exception as e:
         logging.error(f" > Error synthesizing text: {e}")
-        # Print more details if there's an error during synthesis
+        #Print more details if there's an error during synthesis
         import traceback
         traceback.print_exc()
 
-print("\n--- Evaluation Complete ---")
+print("\nEvaluation Complete")
 print(f"Listen to the generated audio files in the '{output_audio_dir}' directory!")
+
