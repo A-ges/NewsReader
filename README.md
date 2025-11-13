@@ -19,8 +19,6 @@ Our project is a distributed system with three parts working together:
 - Updated NVIDIA drivers
 - Anaconda or Miniconda
 
----
-
 ## Before Newsreader setup
 ### Install Erlang
 
@@ -133,8 +131,6 @@ python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
 
 You should see: `CUDA available: True`
 
----
-
 ## Final touches
 
 Open `ai_worker_rabbitmq.py` and make sure the tesseract path matches where you installed it:
@@ -142,8 +138,6 @@ Open `ai_worker_rabbitmq.py` and make sure the tesseract path matches where you 
 ```python
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 ```
-
----
 
 ## Running everything
 
