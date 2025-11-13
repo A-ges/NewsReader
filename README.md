@@ -51,7 +51,6 @@ Grab an external drive or use cloud storage to transfer these folders:
 
 1. **Your entire project folder** (`NewsReader`): contains the python scripts
 2. **The trained model** (`tts_training_output` folder): contains `best_model.pth` (aka the TTS model we trained)
-3. **LJSpeech dataset** (optional, saves you a 3GB download if you want to retrain later)
 
 ## Setting up python
 
