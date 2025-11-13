@@ -47,12 +47,12 @@ Needed to read text from images.
 
 Grab an external drive or use cloud storage to transfer these folders:
 
-1. **Your entire project folder** (`NewsReader`): contains the python scripts
-2. **The trained model** (`tts_training_output` folder): contains `best_model.pth` (aka the TTS model we trained)
+1. Your entire project folder (`NewsReader`): contains the python scripts
+2. The trained model (`tts_training_output` folder): contains `best_model.pth` (the TTS model we trained ourselves)
 
 ## Setting up python
 
-Open **Anaconda Prompt** and keep it open—you'll need it for all these steps.
+Open Anaconda Prompt and keep it open, you'll need it for all these steps.
 
 ### Create your environment
 
@@ -74,21 +74,21 @@ Press `y` when it asks. Don't worry if it takes some time, it is a big download.
 Create a file called `requirements.txt` in your project folder with this content:
 
 ```text
-# Core AI & TTS
+#Core AI & TTS
 TTS==0.22.0
 transformers==4.35.2
 
-# Google Gemini (pinned for Python 3.9 compatibility)
+#Google Gemini (pinned for Python 3.9 compatibility)
 google-generativeai==0.4.1
 google-api-core==2.15.0
 google-auth==2.23.4
 protobuf<4
 
-# Web server and message queue
+#Web server and message queue
 Flask
 pika
 
-# File and audio processing
+#File and audio processing
 pydub
 PyPDF2
 Pillow
@@ -96,7 +96,7 @@ pytesseract
 beautifulsoup4
 requests
 
-# Everything else
+#everything else
 librosa
 soundfile
 matplotlib
@@ -151,7 +151,7 @@ cd "D:\Path\To\Your\NewsReader"
 python ai_worker_rabbitmq.py
 ```
 
-** The worker takes 1-2 minutes to load the TTS model into memory. You'll know it's ready when you see:
+** The worker takes 1 to 2 minutes to load the TTS model into memory. It's ready when you see:
 
 ```
 [*] AI Worker is waiting for messages...
