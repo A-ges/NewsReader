@@ -1,7 +1,7 @@
 # NewsReader
 This repository was created for our Software Engineering for CSAI course. Our task was to develop an application that assists visually impaired people in accessing information. Naturally, our group decided to create NewsReader. The goal is to build accessible summarization and text-to-speech software, specialized in news-related content.
-# Newsreader Application Setup Guide
-## What You're Building
+# Newsreader application setup guide
+## What is built in this instruction
 
 Our project is a distributed system with three parts working together:
 
@@ -10,18 +10,18 @@ Our project is a distributed system with three parts working together:
                                                           
 ```
 
-- **Flask Server** handles the web interface and takes your requests
-- **RabbitMQ** manages job queue so nothing gets lost
-- **AI Worker** does the AI related work: calling APIs and generating speech
+- Flask Server handles the web interface and takes your requests
+- RabbitMQ manages job queue so nothing gets lost
+- AI Worker does the AI related work: calling APIs and generating speech
 
-**What you'll need:**
+**What you will need:**
 - A PC with an NVIDIA GPU (we've used an RTX 3060 Ti to build our project)
 - Updated NVIDIA drivers
 - Anaconda or Miniconda
 
 ---
 
-## Before You Start
+## Before Newsreader setup
 ### Install Erlang
 
 Erlang is needed for RabbitMQ to function.
@@ -37,16 +37,15 @@ RabbitMQ serves as the message queue
   rabbitmq-plugins enable rabbitmq_management
   ```
 - Restart the RabbitMQ in windows services
-- Test it by visiting `http://localhost:15672` (login as `guest` / `guest`)
+- Test it by visiting `http://localhost:15672` (login as guest)
 
 ### Install Tesseract OCR
 
 Needed to read text from images.
 
 - Download from: https://github.com/UB-Mannheim/tesseract/wiki
----
 
-## Moving Your Files
+## Moving your files
 
 Grab an external drive or use cloud storage to transfer these folders:
 
@@ -54,20 +53,18 @@ Grab an external drive or use cloud storage to transfer these folders:
 2. **The trained model** (`tts_training_output` folder): contains `best_model.pth` (aka the TTS model we trained)
 3. **LJSpeech dataset** (optional, saves you a 3GB download if you want to retrain later)
 
----
-
-## Setting Up Python
+## Setting up python
 
 Open **Anaconda Prompt** and keep it open—you'll need it for all these steps.
 
-### Create Your Environment
+### Create your environment
 
 ```bash
 conda create -n tts python=3.9 -y
 conda activate tts
 ```
 
-### Install PyTorch
+### Install pytorch
 
 ```bash
 conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 pytorch-cuda=12.1 -c pytorch -c nvidia
@@ -75,7 +72,7 @@ conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 pytorch-cuda=
 
 Press `y` when it asks. Don't worry if it takes some time, it is a big download.
 
-### Install Everything Else
+### Install everything else
 
 Create a file called `requirements.txt` in your project folder with this content:
 
@@ -121,7 +118,7 @@ pip install -r requirements.txt
 
 ### Fix the Coqui TTS Bug
 
-There's a known issue with Python 3.9 that we need to patch manually.
+There's a known issue with Python 3.9 that needs to patch manually.
 
 Navigate to this folder in File Explorer:
 ```
@@ -129,7 +126,7 @@ C:\ProgramData\anaconda3\envs\tts\lib\site-packages\TTS\tts\utils\text\phonemize
 ```
 Replace the '__init__.py' file in this folder with the one in the "NewsReader/PATCHED __init__.py file" folder
 
-### Check Your GPU
+### Check the GPU
 
 ```bash
 python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
@@ -139,9 +136,9 @@ You should see: `CUDA available: True`
 
 ---
 
-## Final Touches
+## Final touches
 
-Open `ai_worker_rabbitmq.py` and make sure the Tesseract path matches where you installed it:
+Open `ai_worker_rabbitmq.py` and make sure the tesseract path matches where you installed it:
 
 ```python
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -149,7 +146,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 
 ---
 
-## Running Everything
+## Running everything
 
 You need two terminal windows running at the same time.
 
@@ -169,7 +166,7 @@ python ai_worker_rabbitmq.py
 
 Leave this window open and running.
 
-### Terminal 2: Web Server
+### Terminal 2: Web server
 
 Open a second Anaconda Prompt:
 
@@ -181,7 +178,7 @@ python api_server_rabbitmq.py
 
 This one starts quickly
 
-### Now you can use Newsreader
+### Now you can use NewsReader
 
 Open your browser and go to `http://127.0.0.1:5000`
 
