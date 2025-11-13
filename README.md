@@ -67,15 +67,13 @@ conda create -n tts python=3.9 -y
 conda activate tts
 ```
 
-### Install PyTorch (The Important One)
-
-This step matters most. Get it wrong and your GPU won't work.
+### Install PyTorch
 
 ```bash
 conda install pytorch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
 
-Hit `y` when it asks. Don't worry if it takes some time, it is a big download.
+Press `y` when it asks. Don't worry if it takes some time, it is a big download.
 
 ### Install Everything Else
 
@@ -115,7 +113,7 @@ chardet
 bangla==0.0.12
 ```
 
-Now install it all at once:
+Now it can be installed all at once:
 
 ```bash
 pip install -r requirements.txt
@@ -130,8 +128,6 @@ Navigate to this folder in File Explorer:
 C:\ProgramData\anaconda3\envs\tts\lib\site-packages\TTS\tts\utils\text\phonemizers
 ```
 Replace the '__init__.py' file in this folder with the one in the "NewsReader/PATCHED __init__.py file" folder
-
-Save and close.
 
 ### Check Your GPU
 
