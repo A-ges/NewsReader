@@ -181,7 +181,7 @@ python api_server_rabbitmq.py
 
 This one starts quickly
 
-### Use It!
+### Now you can use Newsreader
 
 Open your browser and go to `http://127.0.0.1:5000`
 
