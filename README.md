@@ -35,9 +35,7 @@ RabbitMQ serves as the message queue
   rabbitmq-plugins enable rabbitmq_management
   ```
 - Restart the RabbitMQ in windows services (crtl + shift + esc to open Task Manager -> services -> restart RabbitMQ)
-- Test it by visiting `http://localhost:15672`
-username: guest
-password: guest
+- Test it by visiting `http://localhost:15672` username and password = guest
 
 ### Install Tesseract OCR
 
